@@ -21,16 +21,25 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
-  task_list
-    .add(req.body)
-    .then(newTask => {
-      res.status(201).json(newTask);
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({ message: "Unidentified task...." });
-    });
-});
+// router.post('/', (req, res) => {
+//   task_list
+//     .add(req.body)
+//     .then(newTask => {
+//       res.status(201).json(newTask);
+//     })
+//     .catch(err => {
+//       console.log(err);
+//       res.status(500).json({ message: "Unidentified task...." });
+//     });
+// });
+router.post('/', async (req, res, next) => {
+    try {
+        const id = await task_list.add(req.body)
+        res.status(201).json(await task_list.findById(id))
+    }
+    catch(err) {
+        next(err)
+    }
+})
 
 module.exports = router;
